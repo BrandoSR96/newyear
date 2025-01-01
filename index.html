@@ -1,294 +1,585 @@
 <!DOCTYPE html>
+
 <html lang="es">
 
+
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cuenta Regresiva Año Nuevo 2025</title>
+
     <style>
+
         /* General */
+
         body {
+
             margin: 0;
+
             padding: 0;
+
             font-family: 'Arial', sans-serif;
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             min-height: 100vh;
+
             background: linear-gradient(to bottom, #020024, #090979, #00d4ff);
+
             color: white;
+
             overflow: hidden;
+
         }
+
+
 
         /* Fondo animado de estrellas */
+
         .background {
+
             position: absolute;
+
             width: 100%;
+
             height: 100%;
+
             z-index: -1;
+
             background: url('https://source.unsplash.com/1600x900/?forest,stars') no-repeat center/cover;
+
             animation: pulse 6s infinite alternate;
+
         }
+
+
 
         @keyframes pulse {
+
             0% {
+
                 filter: brightness(0.8);
+
             }
+
+
 
             100% {
+
                 filter: brightness(1.2);
+
             }
+
         }
+
+
 
         /* Contenedor de la cuenta regresiva */
+
         .countdown-container {
+
             text-align: center;
+
             position: relative;
+
             z-index: 2;
+
         }
+
+
 
         .countdown-title {
+
             font-size: 2.5rem;
+
             margin-bottom: 1rem;
+
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+
         }
+
+
 
         .countdown-timer {
+
             display: flex;
+
             justify-content: center;
+
             gap: 1rem;
+
             font-size: 3rem;
+
             letter-spacing: 2px;
+
         }
+
+
 
         .countdown-unit {
+
             text-align: center;
+
         }
+
+
 
         .countdown-number {
+
             font-size: 4rem;
+
             font-weight: bold;
+
             color: gold;
+
         }
+
+
 
         .countdown-label {
+
             font-size: 1.2rem;
+
             text-transform: uppercase;
+
             letter-spacing: 1px;
+
         }
+
+
 
         /* Mensaje sorpresa */
+
         .message {
+
             display: none;
+
             font-size: 4rem;
+
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+
             color: #f9f9f9;
+
             z-index: 10;
+
         }
+
+
 
         /* Efectos de fuegos artificiales */
+
         canvas {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
             z-index: 1;
+
             pointer-events: none;
+
         }
+
+
 
         /* Botón de activación del sonido */
+
         .sound-button,
+
         .favorite-music-button {
+
             display: none;
+
             margin-top: 20px;
+
             padding: 10px 20px;
+
             background-color: #ff6347;
+
             color: white;
+
             border: none;
+
             font-size: 1.5rem;
+
             cursor: pointer;
+
             border-radius: 5px;
+
         }
+
+
 
         .sound-button:hover,
+
         .favorite-music-button:hover {
+
             background-color: #ff4500;
+
         }
+
     </style>
+
 </head>
 
+
+
 <body>
+
     <div class="background"></div>
+
     <div class="countdown-container">
-        <h1>Conteo regresivo</h1>
+
         <div class="countdown-timer" id="timer">
+
             <div class="countdown-unit">
+
                 <div class="countdown-number" id="days">00</div>
+
                 <div class="countdown-label">Días</div>
+
             </div>
+
             <div class="countdown-unit">
+
                 <div class="countdown-number" id="hours">00</div>
+
                 <div class="countdown-label">Horas</div>
+
             </div>
+
             <div class="countdown-unit">
+
                 <div class="countdown-number" id="minutes">00</div>
+
                 <div class="countdown-label">Minutos</div>
+
             </div>
+
             <div class="countdown-unit">
+
                 <div class="countdown-number" id="seconds">00</div>
+
                 <div class="countdown-label">Segundos</div>
+
             </div>
+
         </div>
-        <div class="message" id="message">¡Feliz Año Nuevo 2025, Emperatriz! 🫶🏽🥳🫂🎉</div>
-        <button class="sound-button" id="soundButton">Presiona el botón 🥳🎊🎆🎉</button>
+
+        <div class="message" id="message">¡Feliz Año Nuevo 2025, Emperatriz! 🎉</div>
+
+        <button class="sound-button" id="soundButton">Presiona el botón ;)</button>
+
         <button class="favorite-music-button" id="favoriteMusicButton">Escucha ñ_ñ</button>
+
     </div>
+
     <canvas id="fireworks"></canvas>
 
+
+
     <!-- Elemento de audio -->
+
     <audio id="audio" src="musica/fireworks.mp3"></audio>
 
+
+
     <!-- Reproductor de sonido de fuegos artificiales -->
+
     <audio id="fireworksSound" src="musica/CarlosSadness.mp3" preload="auto"></audio>
 
+
+
     <script>
+
         const timer = {
+
             days: document.getElementById('days'),
+
             hours: document.getElementById('hours'),
+
             minutes: document.getElementById('minutes'),
+
             seconds: document.getElementById('seconds'),
+
             message: document.getElementById('message'),
+
             soundButton: document.getElementById('soundButton'),
+
             favoriteMusicButton: document.getElementById('favoriteMusicButton')
+
         };
 
+
+
         const canvas = document.getElementById('fireworks');
+
         const ctx = canvas.getContext('2d');
+
         let particles = [];
 
+
+
         // Ajustar tamaño del canvas
+
         function resizeCanvas() {
+
             canvas.width = window.innerWidth;
+
             canvas.height = window.innerHeight;
+
         }
+
         window.addEventListener('resize', resizeCanvas);
+
         resizeCanvas();
 
+
+
         // Comprobar si el contador ya terminó (guardado en localStorage)
+
         const countdownEnded = localStorage.getItem('countdownEnded') === 'true';
 
+
+
         if (countdownEnded) {
+
             // Si el contador terminó, ocultar el contador y mostrar mensaje de Año Nuevo
+
             document.getElementById('timer').style.display = 'none';
+
             timer.message.style.display = 'block';
+
             timer.soundButton.style.display = 'inline-block';
+
             //    display: revert-layer;
 
+
+
         }
+
+
 
         // Establecer la fecha de destino: 31 de diciembre de 2024, a las 23:59:59
+
         const targetTime = new Date('2024-12-31T23:59:59');
+
         // Establecer la fecha de destino para 1 minuto desde ahora
+
         //const now = new Date();
+
         //const targetTime = new Date(now.getTime() + 1 * 60 * 100); // 1 minuto después de la hora actual
 
+
+
         // Actualizar el contador
+
         function updateCountdown() {
+
             const now = new Date();
+
             const diff = targetTime - now;
 
+
+
             if (diff <= 0) {
+
                 // Ocultar el contador
+
                 document.getElementById('timer').style.display = 'none';
 
+
+
                 // Mostrar el mensaje de Año Nuevo
+
                 timer.message.style.display = 'block';
+
                 timer.soundButton.style.display = 'revert-layer'; // Mostrar botón para activar el sonido
+
                 return;
+
             }
+
+
 
             const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
             const seconds = Math.floor((diff / 1000) % 60);
 
+
+
             timer.days.textContent = String(days).padStart(2, '0');
+
             timer.hours.textContent = String(hours).padStart(2, '0');
+
             timer.minutes.textContent = String(minutes).padStart(2, '0');
+
             timer.seconds.textContent = String(seconds).padStart(2, '0');
 
+
+
             requestAnimationFrame(updateCountdown);
+
         }
+
+
 
         // Crear partículas para fuegos artificiales
+
         class Particle {
+
             constructor(x, y, color) {
+
                 this.x = x;
+
                 this.y = y;
+
                 this.color = color;
+
                 this.size = Math.random() * 3 + 1;
+
                 this.speedX = Math.random() * 4 - 2;
+
                 this.speedY = Math.random() * 4 - 2;
+
                 this.life = Math.random() * 100 + 50;
+
             }
+
+
 
             update() {
+
                 this.x += this.speedX;
+
                 this.y += this.speedY;
+
                 this.size *= 0.96;
+
                 this.life--;
+
             }
+
+
 
             draw() {
+
                 ctx.beginPath();
+
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+
                 ctx.fillStyle = this.color;
+
                 ctx.fill();
+
             }
+
         }
+
+
 
         function startFireworks() {
+
             setInterval(() => {
+
                 const x = Math.random() * canvas.width;
+
                 const y = Math.random() * canvas.height / 2;
+
                 const color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+
                 for (let i = 0; i < 100; i++) {
+
                     particles.push(new Particle(x, y, color));
+
                 }
+
             }, 500);
 
+
+
             function animate() {
+
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+
                 particles.forEach((p, index) => {
+
                     p.update();
+
                     p.draw();
+
                     if (p.life <= 0) particles.splice(index, 1);
+
                 });
+
                 requestAnimationFrame(animate);
+
             }
+
             animate();
+
         }
 
+
+
         // Mostrar mensaje y activar sonido cuando el usuario lo desee
+
         timer.soundButton.addEventListener('click', () => {
+
             document.getElementById('audio').play(); // Reproducir el sonido
+
             startFireworks(); // Iniciar fuegos artificiales
+
             timer.favoriteMusicButton.style.display = 'inline-block'; // Mostrar botón de música favorita
 
+
+
             // Ocultar el botón "Presiona el boton" después de hacer clic
+
             timer.soundButton.style.display = 'none';
+
         });
+
+
 
         // Activar la música favorita cuando se haga clic
+
         timer.favoriteMusicButton.addEventListener('click', () => {
+
             document.getElementById('fireworksSound').play();
+
         });
 
+
+
         // Iniciar el contador
+
         updateCountdown();
+
     </script>
+
 </body>
+
+
 
 </html>
